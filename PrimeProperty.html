@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>prime property</title> 
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --p: #1A1A1A; --g: #C9A961; --r: #B33A3A; --bg: #F5F5F5; --w: #FFF;} 
+        body {font-family: 'Inter', sans-serif; margin: 0; color: var(--p);}
+        a {text-decoration: none; color: inherit;}
+        header {background: var(--p); color: var(--w); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100;} 
+        .logo {font-weight: bold; font-size: 20px; color: var(--g); cursor: pointer;}
+        nav a {margin-left: 20px; font-size: 14px;} .btn-outline {border: 1px solid var(--g); padding: 5px 15px; border-radius: 4px; color: var(--g) !important;}
+        .hero {background: var(--p); color: var(--w); text-align: center; padding: 80px  20px;} 
+        .hero h1 span { color: var(--g); } 
+        .hero p {color: #aaa; margin: 15px 0 25px;}
+        .btn {background: var(--g); color: var(--p); padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;}
+        .btn-danger {background: var(--r); color: var(--w);} .btn-sm {padding: 6px 12px; font-size: 12px;}
+        .container {max-width: 1100px; margin: 0 auto; padding: 40px 20px;} .section {padding: 60px 0} .grid {display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;}
+        .card {background: var(--w); border: 1px solid #eee; border-radius: 8px; padding: 20px;}
+        .price {color: var(--g); font-weight: bold; font-size: 18px;} .table-box {background: var(--w); border: 1px solid #eee; border-radius: 8px; overflow: hidden;}
+        table {width: 100%; border-collapse: collapse;} th, td {padding: 12px; text-align: left; border-bottom: 1px solid #eee;}
+        th {background: var(--bg); font-size: 12px; text-transform: uppercase;} .badge {padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;}
+        .in {background: #d1fae5; color: #065f46;}
+        .out {background: #fee2e2; color: var(--r);}
+        .siap-huni {background: #fef3c7; color: #92400e;}
+        .siap-kosong {background: #f3e8ff; color: #6b21a8;}
+        .filter-bar {background: var(--bg); padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;}
+        .filter-bar input, .filter-bar select {padding: 8px; border: 1px solid #ddd; border-radius: 4px;} input, select, textarea {
+            width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;
+        }
+        .login-box {max-width: 400px; margin: 80px auto; background: var(--bg); padding: 40px; border-radius: 8px; text-align: center;}
+        #toast {visibility: hidden; min-width: 250px; background: #333; color: #FFF; text-align: center; border-radius: 4px; padding: 16px;
+        position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%);}
+        #toast.show {visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s;}
+        @keyframes fadein {from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout {from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+        .modal {display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5)} 
+        .modal-content {background: var(--w); margin: 10% auto; padding: 30px; border-radius: 8px; width: 90%; max-width: 500px;}
+        .close {float: right; font-size: 28px; font-weight: bold; cursor: pointer;}
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo" onclick="go('home')">PRIME PROPERTY</div>
+        <nav id="nav">
+            <a href="#" onclick="go('home')">Beranda</a>
+            <a href="#" onclick="go('about')">Tentang</a>
+            <a href="#" onclick="go('contact')">Kontak</a>
+            <a href="#" onclick="go('login')" class="btn-outline">Login</a>
+        </nav>
+    </header>
+    <div id="app"></div>
+    <div id="toast"></div>
+    <div id="modal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal()">&times;</span><div id="modalBody"></div></div></div>
+    <script>
+        let properties = [
+            { id: 1, nama: "Aston Villas", group: "Mentari", lebar: 4.5, panjang: 21.5, hadap: "Utara", tipe: "Villa", tingkat: 2, harga: 1350000000, carport: true, status: "in_stock", siap: "siap_huni", kawasan: "Kratakau", deletedAt: null},
+            { id: 2, nama: "Bayan Tree", group: "Permai", lebar: 6, panjang: 11, hadap: "Selatan", tipe: "Ruko", tingkat: 3, carport: false, harga: 2200000000, status: "sold_out", siap: "siap_kosong", kawasan: "Pancing", deletedAt: null},
+            { id: 3, nama: "Ruko Helvetia", group: "-", lebar: 5, panjang: 12, hadap: "Timur", tipe: "Ruko", tingkat: 1, carport: true, harga: 1500000000, status: "in_stock", siap: "siap_huni", kawasan: "Helvetia", deletedAt: null},
+        ];
+        let currentUser = { role: 'guest'};
+        function go(page) {
+            const app = document.getElementById('app');
+            if (page === 'home') {
+                app.innerHTML = '<div class="hero"><h1>Solusi Properti <span>Berkualitas</span></h1><p>Temukan rumah, villa, dan ruko idaman terbaik anda</p> <button class="btn" onclick="go(\'login\')">Login Agent</button></div><div class="container section"><h2 style="text-align: center">Properti Unggulan<div class="grid">' + properties.filter(p => p.status === "in_stock" && !p.deletedAt).slice(0,6).map(renderCard).join('') + '</div></div><div class="container section"><h2 style="text-align: center">Mengapa Prime Property?</h2><div class="grid"><div class="card"><h3>Lokasi Strategis</h3></div><div class="card"><h3>Harga Transparan</h3></div><div class="card"><h3>Layanan Professional</h3></div></div></div><footer class="container" style="text align: center; color: #888; padding: 40px 0; border-top: 1px solid #eee;"><p>&copy; 2026 Prime Property</p></footer>"';
+            } else if (page === 'about') {
+                app.innerHTML = '<div class="container section"><h2>Tentang Kami</h2><p>Prime Property adalah agen properti terpercaya di Medan.</p></div>';
+            } else if (page === 'contact') {
+                app.innerHTML = '<div class="container section"><h2>Kontak Kami</h2><p>Jl. Pancing No. 123, Medan</p> <form onsubmit="handleContact(event)"><input placeholder="Nama" required><input type="email"placecholder="Email" required><input placeholder="HP" required><textarea placeholder="Pesan" required></textarea><button class="btn">Kirim</button></form></div>'
+            } else if (page === 'login') {
+                app.innerHTML = '<div class="login-box"><h2>Login</h2><form onsubmit="handleLogin(event)"><input placeholder= "Email" required><input placeholder= "Password" required><button class="btn" style="width:100%;">Masuk</button></form></div>'
+            } else if(page === 'dashboard') {
+                if (currentUser.role === 'guest') return go ('login');
+                app.innerHTML = '<div class="container"><div style="display:flex;justify-content:space-between;margin-bottom:20px;"><h2>Daftar Properti (' + (currentUser.role === 'superadmin' ? 'Superadmin' : 'Admin') + ')</h2><div> <button class="btn-outline" onclick="logout()">Logout</button>' + (currentUser.role === 'superadmin' ? '<button class="btn" onclick="openFormAdd()">+ Tambah</button>' : '') + '</div></div><div class="filter-bar"><input id="s" placeholder="Cari..." oninput="renderTable()"><select id="k" onchange="renderTable()"><option value="">Kawasan</option><option>Kratakau</option><option>Pancing</option><option>Helvetia</option></select><select id="st" onchange="renderTable()"><option value="">Status</option><option value="in_stock">In Stock</option><option value="sold_out">Sold Out</option></select><select id="siap" onchange="renderTable()"><option value="">Siap</option><option value="siap_huni">Siap Huni</option><option value="siap_kosong">Siap Kosong</option></select><button class="btn" onclick="resetFilter()">Reset</button></div><div class="table-box"><table><thead><tr><th>Nama<th>Group<th>Ukuran<th>Harga<th>Hadap<th>Tingkat<th>Carport<th>Tipe<th>Status<th>Siap<th>Aksi</th></tr></thead><tbody id="tbody"></tbody></table></div></div>';
+                renderTable();
+                
+        }
+    }
+        function renderCard(p) {
+            return '<div class="card"><h3>'+p.nama+'</h3><p class="price">Rp'+p.harga.toLocaleString("id-ID")+'</p><small>'+p.kawasan+'</small></div>'
+        }
+        function resetFilter() {
+                    document.getElementById('s').value = '';
+                    document.getElementById('k').value = '';
+                    document.getElementById('st').value = '';
+                    document.getElementById('siap').value = '';
+
+                    renderTable();
+        }
+        function renderTable() {
+            console.log('properties =', properties);
+            const s = document.getElementById('s').value.toLowerCase();
+            const k = document.getElementById('k').value;
+            const st = document.getElementById('st').value;
+            const siap = document.getElementById('siap').value;
+            const tbody = document.getElementById('tbody');
+             if (!tbody) return;
+             console.log('tbody =', tbody);
+            tbody.innerHTML = properties.filter(p => { 
+            if (p.deletedAt) return false;
+            if (s && !p.nama.toLowerCase().includes(s)) return false;
+            if (s && !p.group.toLowerCase().includes(s)) return false;
+            if (s && !p.kawasan.toLowerCase().includes(s)) return false;
+            if (k && p.kawasan !== k) return false;
+            if (st && p.status !== st) return false;
+            if (siap && p.siap !== siap) return false;
+            return true;
+        }).map(p => {
+             const statusClass = p.status === 'in_stock' ? 'in' : 'out';
+             const statusText = p.status === 'in_stock' ? 'In Stock' : 'Sold Out';
+
+             const siapClass = p.siap === 'siap_huni' ? 'siap-huni' : 'siap-kosong';
+             const siapText = p.siap === 'siap_huni' ? 'Siap Huni' : 'Siap Kosong';
+
+             const btnEdit = currentUser.role === 'superadmin' ? '<button class="btn btn-sm" onclick="event.stopPropagation(); editProm('+ p.id +')">Edit</button>': '';
+             const btnDel = currentUser.role === 'superadmin' ? '<button class="btn btn-sm btn-danger" onclick="deleteProm(' + p.id +')">Hapus</button>' : '';
+             console.log("rendering:", p.nama);
+             return '<tr onclick="showDetail('+ p.id +')"><td>'+p.nama+'</td><td>'+p.group+'</td><td>'+p.lebar+'x'+p.panjang+'</td><td>Rp '+p.harga.toLocaleString("id-ID")+'</td><td>' + p.hadap +'</td><td>'+ p.tingkat +'</td><td>' + (p.carport ? 'Ya' : 'Tidak') + '</td><td>'+p.tipe+'</td><td><span class="badge '+ statusClass + '">' + statusText +'</span></td><td><span class="badge '+ siapClass + '">'+ siapText + '</span></td><td>' + btnEdit + '' + btnDel + '</td></tr>';
+            }).join('');
+            console.log('hasil render =', tbody.innerHTML);
+        }
+        function handleLogin(e) {
+            e.preventDefault();
+            const email =  e.target.querySelector('input').value;
+            if(email.includes('admin')) {
+                currentUser = {role:'admin'};
+            } else {
+         currentUser = {role:'superadmin'}};
+            go('dashboard');
+        }
+        function handleContact(e) {
+            e.preventDefault();
+            alert('Pesan Terkirim!');
+        }
+        function openFormAdd() {
+            document.getElementById('modalBody').innerHTML = '<h3>Tambah Properti</h3><form onsubmit="saveProm(event)"><input id="nama" placeholder="Nama" required><input id="group" placeholder="Group"><input id="lebar" placeholder="Lebar" required><input id="panjang" placeholder="Panjang" required><input id="harga" placeholder="Harga" required><select id="Kawasan"><option>Kratakau</option><option>Pancing</option><option>Helvetia</option></select><button class="btn">Simpan</button></form>';
+            document.getElementById('modal').style.display = 'block';
+        }
+        function editProm(id) {
+            console.log("EDIT PROPERTI", id);
+            const p = properties.find(x => x.id === id)
+             document.getElementById('modalBody').innerHTML = '<h3>Edit Properti</h3><form onsubmit="saveEdit(event, '+ id +')"><input id="enama" placeholder="Nama" value="' + p.nama + '"><input id="eharga" placeholder="Harga" value="' +p.harga+ '"><button class="btn">Simpan</button></form>';
+            document.getElementById('modal').style.display = 'block';
+        }
+        function showDetail(id) {
+            const p = properties.find(x => x.id === id)
+            document.getElementById('modalBody').innerHTML = `<h3>${p.nama}</h3><p>Harga: Rp${p.harga.toLocaleString("id-ID")}</p><p>Kawasan: ${p.kawasan}</p><p>Hadap: ${p.hadap}</p><p>Tipe: ${p.tipe}</p>`;
+            document.getElementById('modal').style.display = 'block';
+        }
+        function saveProm(e) {
+            e.preventDefault();
+            properties.push({
+                id: properties.length + 1, 
+                nama: document.getElementById('nama').value,
+
+                created_at: new Date(),
+                updated_at: new Date(),
+                group:document.getElementById('group').value || '-',
+                lebar: document.getElementById('lebar').value, 
+                panjang: document.getElementById('panjang').value, 
+                harga: parseInt(document.getElementById('harga').value), 
+                status: 'in_stock', 
+                siap: 'siap_huni', 
+                kawasan: document.getElementById('Kawasan').value, 
+                deletedAt: null});
+
+            closeModal();
+            renderTable(); 
+            showToast('Properti diupdate!');
+        }
+        function saveEdit(e, id) {
+            e.preventDefault();
+            let p = properties.find (x => x.id === id);
+            p.nama = document.getElementById('enama').value;
+            p.harga = parseInt(document.getElementById('eharga').value);
+            p.updated_at = new Date();
+            closeModal(); 
+            renderTable(); 
+            showToast('Properti diupdate!');
+        }
+        function deleteProm(id) {
+            if (confirm('Yakin dihapus?')) {
+                let p = properties.find(x => x.id === id);
+                p.deletedAt = new Date();
+                renderTable(); showToast('Properti dihapus!')
+            }
+        }
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.className = "show"
+            setTimeout(() => {toast.className = toast.className.replace("show", "");}, 3000);
+        }
+        function logout() {
+            currentUser = {role : 'guest'};
+            go('home');
+            showToast('Berhasil Logout!')
+        }
+        go('home');
+        
+    </script>
+</body>
+</html>
